@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Clash Tracker</title>
+<style>
+  body{font:16px system-ui;max-width:640px;margin:40px auto;padding:0 16px}
+  input{font-size:18px;padding:8px;width:60%}button{font-size:18px;padding:8px 14px}
+  table{width:100%;border-collapse:collapse;margin-top:16px}td,th{padding:6px;border-bottom:1px solid #ddd;text-align:left}
+  .w{color:#2a7}.l{color:#c33}
+</style>
+<h1>Clash Tracker</h1>
+<form onsubmit="go(event)"><input id="tag" placeholder="#QCJ88VJV"><button>Check</button></form>
+<div id="out"></div>
+<script>
+async function go(e){
+  e.preventDefault();
+  const out=document.getElementById('out'); out.textContent='Loading…';
+  const r=await fetch('/api/player/'+encodeURIComponent(document.getElementById('tag').value));
+  const d=await r.json(); if(d.error){out.textContent=d.error;return}
+  out.innerHTML=`<h2>${d.player.name} · ${d.player.trophies} 🏆</h2>
+  <h3>Win rate per deck</h3><table><tr><th>Deck</th><th>Games</th><th>Win %</th></tr>
+  ${d.decks.map(x=>`<tr><td>${x.deck.map(c=>c.name).join(', ')}</td><td>${x.games}</td><td>${x.win_pct}%</td></tr>`).join('')}</table>
+  <h3>Recent</h3><table>${d.recent.map(b=>`<tr><td class="${b.won?'w':'l'}">${b.won?'W':'L'}</td><td>${b.crowns}-${b.opponent_crowns}</td><td>${b.game_mode||b.type}</td><td>${b.trophy_change??''}</td></tr>`).join('')}</table>`;
+}
+</script>
