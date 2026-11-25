@@ -1,13 +1,19 @@
-# Clash Tracker (v1)
+# Clash Tracker
 
-Express app that tracks Clash Royale players and shows win rate per deck.
-The poller runs inside the server on a timer — no cron needed.
+A Node.js / Express app that tracks Clash Royale players and shows the win rate of each deck they play. A poller
+inside the server pulls each player's battle log on a timer and stores every battle in PostgreSQL, so the history
+keeps growing past the API's last ~25 battles.
+
+**Tech:** Node.js 20, Express 4, PostgreSQL (`pg`, hosted on Supabase), the official Clash Royale API (through the
+RoyaleAPI proxy), vanilla JS front end.
+
+<!-- TODO: add a screenshot (docs/screenshot.png) -->
 
 ## Local
 ```
 npm install
 cp .env.example .env      # fill in DATABASE_URL + CLASH_API_TOKEN
-npm run poll -- '#QCJ88VJV'   # one-shot test: creates tables, pulls your battles
+npm run poll -- '#YOURTAG'   # one-shot test: creates tables, pulls your battles
 npm run dev               # http://localhost:3000
 ```
 
@@ -20,3 +26,11 @@ npm run dev               # http://localhost:3000
 - Battle log only returns ~25 battles; the timer (default 20 min) keeps history from rolling off.
 - `raw` stores the full battle JSON so you can add columns later without re-fetching.
 - Hostinger may restart the process; the scheduler polls on boot so nothing is lost across restarts.
+
+## Status
+
+v1: polling, storage and per-deck win rates work. Ideas next: charts over time, card-level stats, tests.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
